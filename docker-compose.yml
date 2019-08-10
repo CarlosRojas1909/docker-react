@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  web:
+    # at first Docker won't be able to find Dockerfile bc we changed the name to Dockerfile.dev, so we have to make some adjusting to it, instead of just build: . , we are gonna add 2 more fields context and dockerfile as below
+    build:
+      # if we have nested folders we have to specify the folder to look for Dockerfile
+      context: .
+      # here we specify the name of the dockerfile bc we changed the name
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # this line is saying, hey docker, do not create a reference to node_modules from our container to our root project(we deleted it earlier)...doing all of this so we can make changes to our code and be reflected in the browser
+      #Remember this one right here is essentially going to say Do not try to map a folder up against app node modules inside the container.
+      - /app/node_modules
+      #this is line is saying, hey docker, create a reference from the root directory of this project to the app container. the colon(:) symbol says to map all in our current directory to /app, contrary when the colon(:) is not present it means DON'T map anything to /app/node_modules(inside the container already so we don't need a reference to it from our root project plus we deleted our node_mode in our project)
+      - .:/app
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    command: ["npm", "run", "test"]
