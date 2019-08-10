@@ -1,0 +1,10 @@
+sudo: required
+services:
+  - docker
+# NOTE: before_install, it's telling travis CI to execute a series of command(this case to make an image) before whether running our testing or deployment
+before_install:
+  - docker build -t jcr1221/docker-react -f Dockerfile.dev .
+
+# these set of command is telling travis CI what to do, in this case running testing
+script:
+  - docker run -e CI=true USERNAME/docker-react npm run test
