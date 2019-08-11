@@ -2,10 +2,27 @@ language: generic
 sudo: required
 services:
   - docker
-# NOTE: before_install, it's telling travis CI to execute a series of command(this case to make an image) before whether running our testing or deployment
+# before_install, it's telling travis CI to execute a series of command(this case to make an image) before whether running our testing or deployment
 before_install:
   - docker build -t jcr1221/docker-react -f Dockerfile.dev .
 
 # these set of command is telling travis CI what to do, in this case running testing
 script:
   - docker run -e CI=true jcr1221/docker-react npm run test
+
+#  this section is to tell travis to use AWS services to deploy our app
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "docker-react"
+  env: "DockerReact-env"
+  # go to services and type s3(find a bucket with your region). this bucket is basically a hard drive in AWS and is automatically created when we create a project in elasticbeanstalk
+  bucket_name: "elasticbeanstalk-us-east-2-927908546171"
+  # when clickling on our s3 bucket there should be a file with the same name of our project BUT only after you have deployed an app before, first time it's infer that the path is a folder with the same name of our app
+  bucket_path: "docker-react"
+  # here we are telling travis to only run our above commands on master( not on other branches created bbby developers)
+  on: master
+  # the commands below are environment variables of elasticbbeanstalk we saved in travis-ci account,we don't want to hard type our secret key or access key in this file
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
