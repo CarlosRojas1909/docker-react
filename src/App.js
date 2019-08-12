@@ -8,7 +8,7 @@ export default class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>Hi There!!!</p>
+          <p>I was change to try to re deploy this app!</p>
           <a
             className="App-link"
             href="https://reactjs.org"
